@@ -15,12 +15,12 @@ test('Verify that the postman page has title',
 );
 
 
-test('Verify that the learn more button redirects to medium.com', 
-    {
-        tag: ['@regression', '@ui'],
-    },
+test(
+    'Verify that the learn more button redirects to medium.com', 
+    { tag: ['@regression', '@ui'], },
     async ({page}) => {
 
+        await page.goto(PostmanPage.url);
         await page.locator(PostmanPage.learnMoreBtn).click();
         const mediumPage =  await page.context().waitForEvent('page');
         await expect(mediumPage.locator(MediumPage.title)).toBeVisible();
