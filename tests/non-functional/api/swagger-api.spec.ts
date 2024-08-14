@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test'
-
-// Importa dotenv
+// Import dotenv
 require('dotenv').config();
 let apiContext;
 let pet_object = {
@@ -38,30 +37,51 @@ test.afterAll(async ({}) => {
     await apiContext.dispose();
 })
 
-test(
-    'check that a new pet has been created', 
-    { tag: ['@swagger'] },
-    async({}) => {
+test.describe('Execute a group of tests', () => {
+    test.describe.configure({ mode: 'serial' });
 
-    pet_object.id   = 1;
-    pet_object.name = "TinTin"
+    test(
+        'check that a new pet has been created', 
+        { tag: ['@swagger'] },
+        async({}) => {
 
-    const response  = await apiContext.post(
-        "/v2/pet",
-        { 
-            data: pet_object 
-        }
-    );        
-    var jsonData = await response.json();
+        pet_object.id   = 1;
+        pet_object.name = "TinTin"
 
-    expect(jsonData.status).toBe("available");
+        const response  = await apiContext.post(
+            "/v2/pet",
+            { 
+                data: pet_object 
+            }
+        );        
+        var jsonData = await response.json();
 
-    console.log(
-        "Id del perro:",
-        jsonData.id,
-        "nombre del perro:",
-        jsonData.name
-    )
-    
-    expect(response, "Response code is not within 200-299 range").toBeOK();
+        expect(jsonData.status).toBe("available");
+
+        console.log(
+            "Id:",
+            jsonData.id,
+            "pet name:",
+            jsonData.name
+        )
+        
+        expect(response, "Response code is not within 200-299 range").toBeOK();
+    });
+
+    test(
+        'validate that a pet register is returned',
+        { tag: ['@swagger']},
+        async({}) => {
+
+        var id_pet= pet_object.id;
+
+        const response = await apiContext.get(
+            `/v2/pet/${id_pet}`,
+        );
+        var jsonData = await response.json();
+        expect(jsonData.id).toBe(pet_object.id)
+        
+        expect(response, "Response code is not within 200-299 range").toBeOK();
+
+    });
 });
