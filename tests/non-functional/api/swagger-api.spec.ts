@@ -84,4 +84,23 @@ test.describe('Execute a group of tests', () => {
         expect(response, "Response code is not within 200-299 range").toBeOK();
 
     });
+
+    test('verify that an existing pet can be updated', 
+        { tag: ['@swagger']},
+        async({}) => {
+
+            pet_object.name= 'Haruka'
+
+            const response= await apiContext.put(
+                '/v2/pet',
+                {
+                    data: pet_object
+                }
+            );
+
+            var jsonData= await response.json();
+            console.log('New name of pet is: ' + jsonData.name);
+            expect(response, '').toBeOK();
+
+    });
 });
